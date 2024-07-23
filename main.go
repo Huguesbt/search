@@ -78,6 +78,16 @@ func main() {
 			fmt.Println(doc)
 		}
 		break
+	case "list":
+		if results, err := search.DbObj.GetDocuments(); err != nil {
+			log.Fatal(err)
+		} else {
+			fmt.Printf("Résultats de la recherche pour '%s':\n", query)
+			for _, doc := range results {
+				fmt.Printf("Document ID: %d, Title: %s, Text: %s, Tags: %s\n", doc.Id, doc.Title, doc.Text, doc.Tags)
+			}
+		}
+		break
 	case "search":
 		if query == "" {
 			log.Fatal("Query is required")

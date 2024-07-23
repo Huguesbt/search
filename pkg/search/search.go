@@ -17,17 +17,35 @@ func (d *DbEntity) AddDocument(document Document) (Document, error) {
 func (d *DbEntity) GetDocument(id int64) (document Document, err error) {
 	rows, err := d.db.Query("SELECT id, title, text, tags FROM documents WHERE id = ?", id)
 	if err != nil {
-		return document, err
+		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&document.Id, &document.Title, &document.Text, &document.Tags); err != nil {
-			return document, err
+			return
 		}
 	}
 
-	return document, nil
+	return
+}
+
+func (d *DbEntity) GetDocuments() (documents []Document, err error) {
+	rows, err := d.db.Query("SELECT id, title, text, tags FROM documents")
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var doc Document
+		if err := rows.Scan(&doc.Id, &doc.Title, &doc.Text, &doc.Tags); err != nil {
+			return nil, err
+		}
+		documents = append(documents, doc)
+	}
+
+	return
 }
 
 func (d *DbEntity) SearchDocuments(query string) ([]Document, error) {
@@ -51,6 +69,6 @@ func (d *DbEntity) SearchDocuments(query string) ([]Document, error) {
 }
 
 func (d *DbEntity) UpdateDocumentTag(document Document) (Document, error) {
-	_, err := d.db.Exec("UPDATE documents SET tags = ? WHERE id = ?", document.Tags, document.Id)
+	_, err := d.db.Exec("UPDATE documents SET title = ?, tags = ? WHERE id = ?", document.Title, document.Tags, document.Id)
 	return document, err
 }
