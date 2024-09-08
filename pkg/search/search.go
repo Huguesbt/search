@@ -16,7 +16,8 @@ func (d *DbEntity) AddDocument(document Document) (Document, error) {
 }
 
 func (d *DbEntity) GetDocument(id int64) (document Document, err error) {
-	rows, err := d.db.Query("SELECT id, title, text, tags FROM documents WHERE id = ?", id)
+	var rows *sql.Rows
+	rows, err = d.db.Query("SELECT id, title, text, tags FROM documents WHERE id = ?", id)
 	if err != nil {
 		return
 	}

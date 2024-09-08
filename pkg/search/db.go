@@ -8,13 +8,13 @@ import (
 var DbObj DbEntity
 
 type DbEntity struct {
-	DriverName     string
-	DataSourceName string
+	driverName     string
+	dataSourceName string
 	db             *sql.DB
 }
 
 func (d *DbEntity) connectDB() error {
-	if db, err := sql.Open(d.DriverName, d.DataSourceName); err != nil {
+	if db, err := sql.Open(d.driverName, d.dataSourceName); err != nil {
 		return err
 	} else {
 		d.db = db
@@ -26,10 +26,17 @@ func (d *DbEntity) GetDb() *sql.DB {
 	return d.db
 }
 
-func InitDB() error {
-	DbObj.DriverName = "sqlite"
-	DbObj.DataSourceName = "search.db"
+func (d *DbEntity) SetDriverName(driverName string) {
+	d.driverName = driverName
+}
 
+func (d *DbEntity) SetDataSourceName(dataSourceName string) {
+	d.dataSourceName = dataSourceName
+}
+
+func InitDB(driverName string, dataSourceName string) error {
+	DbObj.SetDriverName(driverName)
+	DbObj.SetDataSourceName(dataSourceName)
 	err := DbObj.connectDB()
 	if err != nil {
 		return err

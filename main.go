@@ -27,7 +27,7 @@ func initFlags() {
 }
 
 func initDb() {
-	err := search.InitDB()
+	err := search.InitDB("sqlite", "search.db")
 	if err != nil {
 		log.Fatal(err)
 	}
