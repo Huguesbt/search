@@ -1,10 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
 	"github.com/HuguesBt/search/pkg/search"
 	"log"
+	"os"
 )
 
 var (
@@ -12,6 +14,7 @@ var (
 	id     int
 	title  string
 	text   string
+	file   string
 	tags   string
 	query  string
 )
@@ -20,6 +23,7 @@ func initFlags() {
 	flag.StringVar(&action, "action", "", "Action to realize; add/get/search")
 	flag.StringVar(&title, "title", "", "Title to add")
 	flag.StringVar(&text, "text", "", "Text to add")
+	flag.StringVar(&file, "file", "", "Content of file to add")
 	flag.StringVar(&tags, "tags", "", "Tags to add")
 	flag.IntVar(&id, "id", 0, "Id for get")
 	flag.StringVar(&query, "query", "", "Query to search")
@@ -36,14 +40,27 @@ func initDb() {
 func main() {
 	initFlags()
 	initDb()
-	defer search.DbObj.GetDb().Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+
+		}
+	}(search.DbObj.GetDb())
+
+	if file != "" {
+		if content, err := os.ReadFile(file); err != nil {
+			log.Fatal(err)
+		} else {
+			text = string(content)
+		}
+	}
 
 	switch action {
 	case "add":
 		if title == "" {
 			log.Fatal("Title is required")
 		} else if text == "" {
-			log.Fatal("Text is required")
+			log.Fatal("Text or file is required")
 		} else if doc, err := search.DbObj.AddDocument(search.Document{
 			Title: title,
 			Text:  text,
