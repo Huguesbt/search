@@ -1,6 +1,7 @@
 package search
 
 import (
+	"database/sql"
 	"strings"
 )
 
@@ -22,7 +23,7 @@ func (d *DbEntity) GetDocument(id int64) (document Document, err error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&document.Id, &document.Title, &document.Text, &document.Tags); err != nil {
+		if err = rows.Scan(&document.Id, &document.Title, &document.Text, &document.Tags); err != nil {
 			return
 		}
 	}
@@ -31,7 +32,8 @@ func (d *DbEntity) GetDocument(id int64) (document Document, err error) {
 }
 
 func (d *DbEntity) GetDocuments() (documents []Document, err error) {
-	rows, err := d.db.Query("SELECT id, title, text, tags FROM documents")
+	var rows *sql.Rows
+	rows, err = d.db.Query("SELECT id, title, text, tags FROM documents")
 	if err != nil {
 		return
 	}
@@ -48,24 +50,24 @@ func (d *DbEntity) GetDocuments() (documents []Document, err error) {
 	return
 }
 
-func (d *DbEntity) SearchDocuments(query string) ([]Document, error) {
+func (d *DbEntity) SearchDocuments(query string) (documents []Document, err error) {
+	var rows *sql.Rows
 	query = "%" + strings.ToLower(query) + "%"
-	rows, err := d.db.Query("SELECT id, title, text, tags FROM documents WHERE title LIKE ? OR text LIKE ? OR tags LIKE ?", query, query, query)
+	rows, err = d.db.Query("SELECT id, title, text, tags FROM documents WHERE title LIKE ? OR text LIKE ? OR tags LIKE ?", query, query, query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var documents []Document
 	for rows.Next() {
 		var doc Document
-		if err := rows.Scan(&doc.Id, &doc.Title, &doc.Text, &doc.Tags); err != nil {
+		if err = rows.Scan(&doc.Id, &doc.Title, &doc.Text, &doc.Tags); err != nil {
 			return nil, err
 		}
 		documents = append(documents, doc)
 	}
 
-	return documents, nil
+	return
 }
 
 func (d *DbEntity) UpdateDocumentTag(document Document) (Document, error) {
