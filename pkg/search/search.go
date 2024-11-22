@@ -32,6 +32,23 @@ func (d *DbEntity) GetDocument(id int64) (document Document, err error) {
 	return
 }
 
+func (d *DbEntity) GetDocumentByTitle(title string) (document Document, err error) {
+	var rows *sql.Rows
+	rows, err = d.db.Query("SELECT id, title, text, tags FROM documents WHERE title = ?", title)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err = rows.Scan(&document.Id, &document.Title, &document.Text, &document.Tags); err != nil {
+			return
+		}
+	}
+
+	return
+}
+
 func (d *DbEntity) GetDocuments() (documents []Document, err error) {
 	var rows *sql.Rows
 	rows, err = d.db.Query("SELECT id, title, text, tags FROM documents")
