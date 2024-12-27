@@ -10,19 +10,23 @@ import (
 )
 
 var (
-	action string
-	id     int
-	title  string
-	text   string
-	file   string
-	tags   string
-	query  string
+	action      string
+	id          int
+	title       string
+	text        string
+	description string
+	notes       string
+	file        string
+	tags        string
+	query       string
 )
 
 func initFlags() {
 	flag.StringVar(&action, "action", "", "Action to realize; add/get/search")
 	flag.StringVar(&title, "title", "", "Title to add")
 	flag.StringVar(&text, "text", "", "Text to add")
+	flag.StringVar(&description, "description", "", "Description to add")
+	flag.StringVar(&notes, "notes", "", "Notes to add")
 	flag.StringVar(&file, "file", "", "Content of file to add")
 	flag.StringVar(&tags, "tags", "", "Tags to add")
 	flag.IntVar(&id, "id", 0, "Id for get")
@@ -62,9 +66,11 @@ func main() {
 		} else if text == "" {
 			log.Fatal("Text or file is required")
 		} else if doc, err := search.DbObj.AddDocument(search.Document{
-			Title: title,
-			Text:  text,
-			Tags:  tags,
+			Title:       title,
+			Text:        text,
+			Tags:        tags,
+			Description: description,
+			Notes:       notes,
 		}); err != nil {
 			log.Fatal(err)
 		} else {
@@ -76,13 +82,19 @@ func main() {
 			log.Fatal("tags is required")
 		} else if id == 0 {
 			log.Fatal("Id is required")
+		} else if doc, err := search.DbObj.GetDocument(int64(id)); err != nil {
+			log.Fatal(err)
+		} else if doc.Id == 0 {
+			log.Fatal(fmt.Errorf("document Id is not found"))
 		} else if doc, err := search.DbObj.UpdateDocumentTag(search.Document{
-			Id:   int64(id),
-			Tags: tags,
+			Id:          int64(id),
+			Tags:        tags,
+			Description: description,
+			Notes:       notes,
 		}); err != nil {
 			log.Fatal(err)
 		} else {
-			fmt.Println("Added document", doc.Id)
+			fmt.Println("Updated document", doc.Id)
 		}
 		break
 	case "get":
