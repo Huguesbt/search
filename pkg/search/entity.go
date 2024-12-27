@@ -5,8 +5,10 @@ import (
 )
 
 type Document struct {
-	Id    int64
-	Title string
-	Text  string
-	Tags  string
+	Id          int64
+	Title       string
+	Text        string
+	Description string
+	Notes       string
+	Tags        string
 }

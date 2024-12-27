@@ -47,6 +47,8 @@ func InitDB(driverName string, dataSourceName string) error {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		text TEXT NOT NULL,
+		description TEXT NOT NULL,
+		notes TEXT NOT NULL,
 		tags TEXT
 	);
 	`
