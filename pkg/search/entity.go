@@ -5,10 +5,10 @@ import (
 )
 
 type Document struct {
-	Id          int64
-	Title       string
-	Text        string
-	Description string
-	Notes       string
-	Tags        string
+	Id          int64  `json:"id"`
+	Title       string `json:"title"`
+	Text        string `json:"text"`
+	Description string `json:"description"`
+	Notes       string `json:"notes"`
+	Tags        string `json:"tags"`
 }
