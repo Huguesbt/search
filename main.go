@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/HuguesBt/search/pkg/search"
@@ -104,17 +105,17 @@ func main() {
 			log.Fatal(err)
 		} else {
 			fmt.Println("Get document")
-			fmt.Println(doc)
+			docJson, _ := json.Marshal(doc)
+			fmt.Println(string(docJson))
 		}
 		break
 	case "list":
 		if results, err := search.DbObj.GetDocuments(); err != nil {
 			log.Fatal(err)
 		} else {
-			fmt.Printf("Résultats de la recherche pour '%s':\n", query)
-			for _, doc := range results {
-				fmt.Printf("Document ID: %d, Title: %s, Text: %s, Tags: %s\n", doc.Id, doc.Title, doc.Text, doc.Tags)
-			}
+			fmt.Printf("Liste des documents: %d\n", len(results))
+			resultsJson, _ := json.Marshal(results)
+			fmt.Println(string(resultsJson))
 		}
 		break
 	case "search":
@@ -123,10 +124,9 @@ func main() {
 		} else if results, err := search.DbObj.SearchDocuments(query); err != nil {
 			log.Fatal(err)
 		} else {
-			fmt.Printf("Résultats de la recherche pour '%s':\n", query)
-			for _, doc := range results {
-				fmt.Printf("Document ID: %d, Title: %s, Text: %s, Tags: %s\n", doc.Id, doc.Title, doc.Text, doc.Tags)
-			}
+			fmt.Printf("Résultats de la recherche pour '%s': %d\n", query, len(results))
+			resultsJson, _ := json.Marshal(results)
+			fmt.Println(string(resultsJson))
 		}
 		break
 	default:

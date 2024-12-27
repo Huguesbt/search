@@ -31,7 +31,7 @@ pre-test:
 	rm -f search.db || exit 0
 	rm -f nohup.out || exit 0
 
-post-build: insert-texts
+post-build: insert-texts get-text search-text
 
 test-lint:
 	go fmt . ${pkg_folder}
@@ -44,3 +44,9 @@ test: pre-test test-lint test-cover
 
 insert-texts:
 	./scripts/insert_text.sh data
+
+get-text:
+	./search -action get -id 1
+
+search-text:
+	./search -action search -query lorem
