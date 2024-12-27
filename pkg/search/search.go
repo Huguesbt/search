@@ -21,7 +21,13 @@ func (d *DbEntity) GetDocument(id int64) (document Document, err error) {
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		if err := rows.Close(); err != nil {
+			return
+		} else {
+			return
+		}
+	}(rows)
 
 	for rows.Next() {
 		if err = rows.Scan(&document.Id, &document.Title, &document.Text, &document.Tags); err != nil {
@@ -38,7 +44,13 @@ func (d *DbEntity) GetDocumentByTitle(title string) (document Document, err erro
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		if err := rows.Close(); err != nil {
+			return
+		} else {
+			return
+		}
+	}(rows)
 
 	for rows.Next() {
 		if err = rows.Scan(&document.Id, &document.Title, &document.Text, &document.Tags); err != nil {
@@ -55,7 +67,13 @@ func (d *DbEntity) GetDocuments() (documents []Document, err error) {
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		if err := rows.Close(); err != nil {
+			return
+		} else {
+			return
+		}
+	}(rows)
 
 	for rows.Next() {
 		var doc Document
@@ -75,7 +93,13 @@ func (d *DbEntity) SearchDocuments(query string) (documents []Document, err erro
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		if err := rows.Close(); err != nil {
+			return
+		} else {
+			return
+		}
+	}(rows)
 
 	for rows.Next() {
 		var doc Document
